@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>เด็กอคาเดมี · เกมจำลองชีวิตนักฟุตบอล</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@700&display=swap">
+<style>
+:root{--bg:#f6f5f1;--card:#fff;--tx:#1d2a22;--mu:#667069;--ac:#1f7a4d;--ac2:#e8f3ec;--bd:#dcdad2;--bad:#b3392b;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121815;--card:#1b231e;--tx:#e8ede9;--mu:#98a39c;--ac:#4fc388;--ac2:#1f3328;--bd:#2d3830;--bad:#ef7d6d}}
+:root[data-theme="dark"]{--bg:#121815;--card:#1b231e;--tx:#e8ede9;--mu:#98a39c;--ac:#4fc388;--ac2:#1f3328;--bd:#2d3830;--bad:#ef7d6d}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,"Noto Sans Thai",sans-serif;line-height:1.55}
+main{max-width:560px;margin:0 auto;padding:18px 16px 40px}
+h1{font-size:1.5rem;margin:.2em 0}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px 16px;margin:12px 0}
+.mu{color:var(--mu);font-size:.9rem}
+button{font:inherit;border:1px solid var(--ac);background:var(--card);color:var(--ac);border-radius:10px;padding:9px 14px;margin:4px 4px 0 0;cursor:pointer}
+button.p{background:var(--ac);color:var(--bg);font-weight:600}
+.bar{height:8px;background:var(--ac2);border-radius:6px;overflow:hidden;margin:4px 0 8px}
+.bar i{display:block;height:100%;background:var(--ac)}
+.g{display:grid;grid-template-columns:1fr 1fr;gap:4px 12px}
+#log{max-height:320px;overflow-y:auto}
+#log p{margin:.35em 0;border-bottom:1px dashed var(--bd);padding-bottom:.35em}
+.bd{color:var(--bad)}
+.bar i{transition:width .1s linear}
+@keyframes pop{from{opacity:0;transform:translateY(8px) scale(.97)}to{opacity:1;transform:none}}
+#log p:first-child{animation:pop .4s ease}
+#cv{width:480px;image-rendering:pixelated;border:2px solid var(--tx);border-radius:4px;display:block;margin:12px auto}
+.card{border-radius:4px;border:2px solid var(--tx);box-shadow:3px 3px 0 var(--bd)}
+button{border-radius:4px;border-width:2px;box-shadow:0 3px 0 var(--ac)}
+h1,.rc{font-family:'Chakra Petch','Noto Sans Thai',sans-serif;font-weight:700;line-height:1.3}h1{font-size:1.5rem}.rc{font-size:1.3rem!important}
+.bar,.bar i{border-radius:0}
+.ch{display:flex;align-items:flex-end;gap:2px;height:60px;border-bottom:3px solid var(--tx)}.ch i{flex:1;background:var(--ac)}
+table{width:100%;font-size:.85rem;border-collapse:collapse;margin-top:6px}td{padding:2px 4px}td:last-child{text-align:right}tr.me{background:var(--ac2);font-weight:700}
+.roll{text-align:center}
+.rc{font-size:1.7rem;font-weight:700;margin:.3em 0;min-height:2.2em;display:flex;align-items:center;justify-content:center}
+.rp{font-size:1.2rem;color:var(--ac);font-weight:600}
+.roll.land{animation:pop .5s ease;border-color:var(--ac);box-shadow:0 0 0 3px var(--ac2)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+:root{--warn:#b8740a}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--warn:#f0b04a}}
+:root[data-theme="dark"]{--warn:#f0b04a}
+.bar.dual{position:relative}.bar.dual i{position:absolute;left:0;top:0}
+.bar.dual i.gh{background:repeating-linear-gradient(45deg,var(--mu) 0 3px,transparent 3px 6px);opacity:.5}
+.en{margin:10px 0 4px;padding:8px 10px;border:2px solid var(--bd);border-left-width:6px;border-radius:4px}
+.en.hi{border-left-color:var(--ac)}.en.mid{border-left-color:var(--warn)}.en.lo{border-left-color:var(--bad)}
+.en .hd{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:.9rem}
+.en .bar{position:relative;height:12px;border:2px solid var(--tx);background:transparent;margin:6px 0 4px}
+.en.hi .bar i{background:var(--ac)}.en.mid .bar i{background:var(--warn)}.en.lo .bar i{background:var(--bad)}
+.tk{position:absolute;left:70%;top:0;bottom:0;width:2px;background:var(--tx);opacity:.55}
+.sm{font-size:.78rem}
+.sec{display:flex;align-items:center;gap:8px;margin:14px 0 8px;font:700 .8rem 'Chakra Petch','Noto Sans Thai',sans-serif;color:var(--mu)}
+.sec::after{content:"";flex:1;height:2px;background:var(--bd)}
+.opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
+.opt,.eo{position:relative;margin:0;text-align:left;color:var(--tx);background:var(--card);border:2px solid var(--bd);border-radius:4px;box-shadow:0 3px 0 var(--bd);transition:transform .08s,box-shadow .08s,border-color .15s,background .15s}
+.opt{display:flex;flex-direction:column;align-items:flex-start;gap:3px;padding:10px 12px}
+.opt:hover,.eo:hover{border-color:var(--ac);box-shadow:0 3px 0 var(--ac)}
+.opt:active,.eo:active{transform:translateY(2px);box-shadow:0 1px 0 var(--ac)}
+.opt.on{border-color:var(--ac);background:var(--ac2);box-shadow:0 3px 0 var(--ac)}
+.opt .ic{font-size:1.4rem;line-height:1}.opt small{color:var(--mu);font-size:.76rem;line-height:1.35}
+.eb{position:absolute;top:8px;right:8px;font-size:.7rem;font-weight:700;padding:0 5px;border:2px solid}
+.eb.up{color:var(--ac)}.eb.dn{color:var(--bad)}
+.pv{margin-top:12px;padding:8px 10px;border:2px dashed var(--bd);font-size:.85rem}
+.ctl{display:flex;gap:8px;margin-top:14px;padding-top:12px;border-top:2px dashed var(--bd)}.ctl button{margin:0;flex:1}.ctl .go{flex:2}
+.q{margin:.3em 0 .6em;font-weight:600}
+.evo{display:flex;flex-direction:column;gap:10px}
+.eo{display:flex;align-items:center;gap:12px;width:100%;padding:11px 12px}
+.eo .lt{flex:none;width:30px;height:30px;display:grid;place-items:center;background:var(--ac);color:var(--bg);font:700 1rem 'Chakra Petch','Noto Sans Thai',sans-serif}
+
+#app>.card.roll{max-width:560px;margin:20px auto}
+@media (min-width:1000px) and (min-height:560px){
+html,body{height:100%;overflow:hidden}
+main{max-width:1600px;height:100dvh;display:flex;flex-direction:column;padding:8px 20px 12px}
+h1{font-size:1.15rem;margin:0 0 6px}
+#app{flex:1;min-height:0}
+.gm{display:grid;grid-template-columns:minmax(300px,1fr) minmax(400px,1.3fr) minmax(300px,1fr);gap:14px;height:100%}
+.col{display:flex;flex-direction:column;gap:10px;min-height:0;overflow-y:auto;padding:0 4px 4px 0}
+.col>.card{margin:0;padding:10px 12px;flex:none}
+body{line-height:1.4}
+#cv{width:100%;height:auto;margin:0;flex:none}
+.bar{margin:3px 0 6px}
+.en{margin:6px 0 2px;padding:6px 10px}
+.sec{margin:8px 0 5px}
+.opts{gap:8px}
+.opt{padding:7px 10px}
+.pv{margin-top:8px;padding:6px 10px}
+.ctl{margin-top:10px;padding-top:10px}
+.eo{padding:9px 12px}
+.col>.lgc{max-height:50%;overflow-y:auto}
+.col>#log{flex:1;min-height:0;max-height:none;overflow-y:auto}
+}
+.fd{margin:8px 0 2px;padding:6px 10px;border-left:4px solid var(--ac);background:var(--ac2);font-size:.82rem;min-height:68px;overflow:hidden}
+.fd p{margin:2px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.fd p:first-child{animation:pop .4s ease}
+@media (min-width:640px){.opts.c4{grid-template-columns:repeat(4,1fr)}}
+.opts.c4{grid-template-columns:repeat(2,1fr)}
+@media (min-width:1000px) and (min-height:560px){.gm{grid-template-columns:minmax(300px,1fr) minmax(460px,1.5fr) minmax(300px,1fr)}.opts.c4 .opt{padding:7px 8px}}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px}#lang{font:inherit;padding:4px 8px;border:2px solid var(--tx);background:var(--card);color:var(--tx);border-radius:4px}
+</style>
+</head>
+<body>
+<main>
+<div class="top"><h1 id="ttl"></h1><select id="lang" onchange="setLang(this.value)" title="Language"></select></div>
+<p class="mu">คุณถูกสุ่มให้เป็นเด็กฝึกอายุ 14 ปีในอคาเดมีสักแห่ง จะเก่งแค่ไหนส่วนหนึ่งเป็นพรสวรรค์ที่คุณมองไม่เห็น ส่วนหนึ่งเป็นสโมสรที่คุณเลือกไม่ได้ (สโมสรและตัวเลขในเกมเป็นข้อมูลสมมติ)</p>
+<div id="app"></div>
+</main>
+<script>
+const CL0=[
+["ราชธานี ยูไนเต็ด","ไทย",1,5],["ซิตี้ ฟอร์เรสต์","อังกฤษ",1,5],["เรอัล มาเรนา","สเปน",1,5],["โบรุสเซีย นอร์ด","เยอรมนี",1,4],
+["เวอร์เดส ลียง","ฝรั่งเศส",2,4],["อัซซูร์ มิลาน","อิตาลี",2,4],["ปอร์โต อัลบา","โปรตุเกส",2,5],["อาแจ็กซ์ ออเรนจ์","เนเธอร์แลนด์",2,5],
+["เซาเปาลู เรด","บราซิล",2,4],["บางกอก สตาร์","ไทย",3,3],["ลีดส์ ไฮแลนด์","อังกฤษ",3,3],["เซบียา โกลด์","สเปน",3,3],
+["โคริติบา บลู","บราซิล",3,3],["เชียงใหม่ ไลออน","ไทย",4,2],["ฮัมบูร์ก พอร์ต","เยอรมนี",4,2],["ลาโกส ยูธ","ไนจีเรีย",4,2],
+["ภูเก็ต โอเชียน","ไทย",5,1],["บูเอโนสไอเรส บาร์ริโอ","อาร์เจนตินา",5,2],["อักกรา สตาร์","กานา",5,1]];
+const CL=[
+['Manchestor Utd','อังกฤษ',1,5],['Liverpul','อังกฤษ',1,5],['Real Madryd','สเปน',1,5],['Barcelone','สเปน',1,5],['Bayerne Munchen','เยอรมนี',1,5],['Paree SG','ฝรั่งเศส',1,4],['Juventis','อิตาลี',1,4],
+['Dortmunt BV','เยอรมนี',2,5],['Ajaks','เนเธอร์แลนด์',2,5],['Benfika','โปรตุเกส',2,5],['Portto','โปรตุเกส',2,5],['Inter Milano','อิตาลี',2,4],['Lyone','ฝรั่งเศส',2,4],['Atletico Madryd','สเปน',2,4],['Flamengu','บราซิล',2,4],['Santoz','บราซิล',2,5],['Boka Juniors','อาร์เจนตินา',2,4],['River Platte','อาร์เจนตินา',2,4],
+['Buriram Yunited','ไทย',3,3],['BG Pathoom','ไทย',3,3],['Muangtong Utd','ไทย',3,3],['Leedz','อังกฤษ',3,3],['Sevilya','สเปน',3,3],['Koritiba','บราซิล',3,3],['Raceing Club','อาร์เจนตินา',3,3],
+['Porte FC','ไทย',4,2],['Chiangray Utd','ไทย',4,2],['Hamburk','เยอรมนี',4,2],['Enyimbah','ไนจีเรีย',4,2],['Asante Kotoku','กานา',4,2],['Bolonya','อิตาลี',4,2],
+['Chiang Mei FC','ไทย',5,1],['Rangerz Enugu','ไนจีเรีย',5,1],['Hearts of Oke','กานา',5,1],['Nantez','ฝรั่งเศส',5,2],['Almera City','เนเธอร์แลนด์',5,2]];
+const SB=[0,3e6,1.2e6,4e5,1.2e5,3e4],fm=n=>n>=1e6?(n/1e6).toFixed(1)+'M':n>=1e3?Math.round(n/1e3)+'K':''+Math.round(n);
+function pay(){const t=tierNow(),r=Math.max(.4,Math.min(2.5,1+(P.ca-TH[t])/20));P.sal=Math.round(SB[t]*(P.age<17?.03:r*P.bonus));P.earn+=P.sal;P.h.push([P.age,P.club[0],P.ca,P.sal])}
+const AWN={gb:'ดาวซัลโว ',ga:'ดาวแอสซิสต์ ',gg:'ถุงมือทองคำ ',poy:'ผู้เล่นยอดเยี่ยมแห่งปี ',bd:'กองหลังยอดเยี่ยมแห่งปี '},PAD=['Rovers','Athletic','Town','Albion','Wanderers','Sporting','Dynamo','Racing','Olympic'];
+const awStr=()=>{const c={};P.aw.forEach(x=>c[x[0]]=(c[x[0]]||0)+1);return Object.entries(c).map(([k,v])=>AWN[k]+' ×'+v).join(' · ')};
+const lgHtml=()=>{if(!P.lg)return'';return `<div class="card lgc"><b> ตารางลีก (อายุ ${P.lg.yr})</b> <span class="mu">แชมป์ ${P.titles} สมัย${P.aw.length?' · '+awStr():''}</span><table>${P.lg.rows.map((x,i)=>`<tr class="${x.me?'me':''}"><td>${i+1}</td><td>${x.n}</td><td>${x.w}-${x.d}-${x.l}</td><td>${x.p}</td></tr>`).join('')}</table></div>`};
+function season(apps,goals,ast,cs){
+ if(P.age<18)return;
+ const t=tierNow(),me=P.club,pool=CL.filter(c=>c[1]===me[1]&&c[0]!==me[0]).sort(()=>Math.random()-.5).slice(0,9);
+ const T=[{n:me[0],s:TH[t]+(cae()-TH[t])*.15+(se('df')-50)*({GK:.12,DF:.12,MF:.04,FW:.02})[P.pos[0]],me:1}];pool.forEach(c=>T.push({n:c[0],s:TH[c[2]]}));
+ let k=0;while(T.length<10)T.push({n:PAD[k++%9]+' FC',s:TH[Math.max(1,Math.min(5,t+I(-1,1)))]});
+ T.forEach(x=>{x.sc=x.s+G()*7;x.p=Math.max(6,Math.min(48,Math.round(27+(x.sc-55)*1.1)));x.w=Math.floor(x.p/3.3);x.d=x.p-3*x.w;x.l=Math.max(0,18-x.w-x.d)});
+ T.sort((a,b)=>b.p-a.p||b.sc-a.sc);const pos=T.findIndex(x=>x.me)+1;P.lg={rows:T,pos,yr:P.age};
+ if(pos===1){P.titles++;P.earn+=SB[t]*.1;log('คว้าแชมป์ลีกกับ '+me[0]+' ')}else log('จบฤดูกาลอันดับ '+pos+' ของลีก');
+ if(P.pos[0]!=='FW'&&se('df')>=60&&pos<=3)log('แนวรับที่มีคุณเป็นกำลังสำคัญ ช่วยให้ทีมเสียประตูน้อยที่สุดกลุ่มหนึ่งของลีก');else if((P.pos[0]==='DF'||P.pos[0]==='GK')&&se('df')<=35&&pos>=7)log('แนวรับหละหลวม ทีมเสียประตูง่ายตลอดฤดูกาล',1);
+ const pro=apps>=15,aw=x=>{P.aw.push([x,P.age]);P.bonus=Math.min(2,P.bonus*1.04);P.earn+=SB[t]*.05;log(' ได้รับรางวัล '+AWN[x])};
+ if(pro&&goals>=I(12,20))aw('gb');
+ if(pro&&ast>=I(8,13))aw('ga');
+ if(P.pos[0]==='DF'&&pro&&cs>=I(7,12)&&Math.random()<.35+(pos<=3?.25:0))aw('bd');
+ if(P.pos[0]==='GK'&&pro&&cae()>=TH[t]+2&&Math.random()<.4+(pos<=3?.2:0))aw('gg');
+ if(pro&&cae()>=TH[t]+8&&Math.random()<.45+(pos<=2?.25:0))aw('poy')}
+function summary(){
+ const g=[];for(const r of P.h){const l=g[g.length-1];if(l&&l.c===r[1])l.e=r[0];else g.push({c:r[1],s:r[0],e:r[0]})}
+ const mx=Math.max(1,...P.h.map(r=>r[2]));
+ return `<div class="card"><b> สรุปอาชีพ</b><div class="g mu" style="margin-top:6px"><span>เลิกเล่นตอนอายุ ${P.age}</span><span>ลงเล่น ${P.apps} นัด</span><span>ประตู ${P.goals}</span><span>แอสซิสต์ ${P.ast}</span><span>ไม่เสียประตู ${P.cs}</span><span>ทีมชาติ ${P.caps} นัด</span><span>ความสามารถสูงสุด ${P.peak}</span><span>รายได้รวม $${fm(P.earn)}</span><span>ศักยภาพที่ซ่อน ${P.pa}</span><span>แชมป์ลีก ${P.titles}</span><span>รางวัลส่วนตัว ${P.aw.length}</span></div><div class="mu" style="margin-top:8px">ความสามารถตามอายุ (15 ปีขึ้นไป)</div><div class="ch">${P.h.map(r=>`<i title="${r[0]}" style="height:${Math.round(r[2]/mx*100)}%"></i>`).join('')}</div>${P.aw.length?`<div class="mu" style="margin-top:8px">รางวัล</div><div>${awStr()}</div>`:''}<div class="mu" style="margin-top:8px">เส้นทางสโมสร</div>${g.map(x=>`<div>${x.c} <span class="mu">อายุ ${x.s}–${x.e}</span></div>`).join('')}</div>`}
+const TH=[0,78,68,58,48,38],TW=[0,1,2,3,4,3],POS=[["GK","ผู้รักษาประตู",0.0],["DF","กองหลัง",0.03],["MF","กองกลาง",0.1],["FW","กองหน้า",0.35]];
+const R=(a,b)=>a+Math.random()*(b-a),I=(a,b)=>Math.floor(R(a,b+1)),G=()=>(Math.random()+Math.random()+Math.random()-1.5)*2;
+let P,auto=false,pend=null,timer=null,left=15,paused=false,spd=1;const YT=15;
+const AR={GK:.01,DF:.06,MF:.2,FW:.15},SK=['sh','ps','dr','df'],CR={GK:.38,DF:.3,MF:.12,FW:.05};
+const SKN=()=>P.pos[0]==='GK'?['เซฟลูกยิง','จ่ายบอล','คุมพื้นที่','การรับลูก']:['ยิง','ส่ง','เลี้ยงบอล','เกมรับ'];
+const NM={
+'ไทย':[['ธนกฤต','ปัณณวัฒน์','ภูริ','ศุภชัย','อภิวัฒน์','ชยพล','กฤษณะ','นพดล'],['ศรีสุข','แก้วมณี','วงศ์ใหญ่','ทองดี','จันทร์เพ็ญ','สายบุญ']],
+'อังกฤษ':[['Jack','Harry','Oliver','Callum','Mason','Jude'],['Walker','Hughes','Bennett','Carter','Foster','Reid']],
+'สเปน':[['Pablo','Álvaro','Diego','Mario','Hugo','Iker'],['García','Moreno','Ruiz','Navarro','Ortega','Vidal']],
+'เยอรมนี':[['Lukas','Jonas','Felix','Leon','Noah','Finn'],['Müller','Schäfer','Keller','Brandt','Vogel','Hartmann']],
+'ฝรั่งเศส':[['Lucas','Hugo','Théo','Maxime','Nathan','Kylian'],['Dubois','Lambert','Moreau','Girard','Fournier','Roux']],
+'อิตาลี':[['Matteo','Luca','Marco','Federico','Lorenzo','Nicolò'],['Rossi','Conti','Ferrari','Bianchi','Greco','Moretti']],
+'โปรตุเกส':[['João','Tiago','Rúben','Diogo','Gonçalo','Rafa'],['Silva','Santos','Ferreira','Costa','Pereira','Almeida']],
+'เนเธอร์แลนด์':[['Daan','Sem','Jesse','Milan','Bram','Luuk'],['de Jong','van Dijk','Bakker','Visser','Smit','Mulder']],
+'บราซิล':[['Lucas','Gabriel','Matheus','Vinícius','Rodrigo','Thiago'],['Oliveira','Souza','Lima','Pereira','Barbosa','Rocha']],
+'ไนจีเรีย':[['Chinedu','Emeka','Tunde','Segun','Ikenna','Femi'],['Okafor','Adeyemi','Bello','Nwosu','Okoye','Balogun']],
+'อาร์เจนตินา':[['Matías','Santiago','Facundo','Nicolás','Lautaro','Thiago'],['Fernández','Gómez','Rodríguez','Acosta','Medina','Benítez']],
+'กานา':[['Kwame','Kofi','Yaw','Kwesi','Abdul','Nii'],['Mensah','Owusu','Boateng','Asante','Appiah','Tetteh']]};
+const mkName=cn=>{const t=NM[cn]||NM['ไทย'],p=a=>a[I(0,a.length-1)];return p(t[0])+' '+p(t[1])};
+const initSk=pos=>{const b=pos[0],r=()=>I(18,32);return{sh:r()+(b==='FW'?8:b==='MF'?2:b==='DF'?-4:-10),ps:r()+(b==='MF'?8:b==='DF'?3:b==='FW'?1:-4),dr:r()+(b==='FW'?5:b==='MF'?4:b==='DF'?-2:-8),df:r()+(b==='DF'?10:b==='GK'?6:b==='MF'?0:-8)}};
+const skUp=(f,g)=>{if(f===3)return;for(const k of SK)P.sk[k]=Math.max(5,Math.min(99,P.sk[k]+Math.round(g*.6+R(-1,1.5))));if(f>=5&&f<9){const k=SK[f-5];P.sk[k]=Math.min(99,P.sk[k]+I(3,6))}else if(f===9)for(const k of SK)P.sk[k]=Math.min(99,P.sk[k]+2)};
+const pickPos=()=>{const r=Math.random();return r<.35?POS[3]:r<.65?POS[2]:r<.9?POS[1]:POS[0]};
+function pickClub(){let t=CL.reduce((s,c)=>s+TW[c[2]],0),r=Math.random()*t;for(const c of CL){r-=TW[c[2]];if(r<=0)return c}return CL[0]}
+function start(){
+ stopTimer();paused=false;const c=pickClub(),pos=pickPos();
+ P={age:14,club:c,tier:c[2],acad:c[3],pos,pa:Math.max(40,Math.min(96,Math.round(52+G()*13+c[3]*1.2))),ca:Math.round(R(22,34)),
+ apps:0,goals:0,caps:0,peak:0,loan:false,log:[],over:false,clubs:[c[0]],focus:null,seen:[],edu:0,ast:0,name:mkName(c[1]),sk:initSk(pos),ch:{},bonus:1,earn:0,sal:0,h:[],aw:[],titles:0,lg:null,en:100,cs:0};
+ log(`คุณคือ <b>${P.name}</b> เด็กฝึก <b>${pos[1]}</b> ของ <b>${c[0]}</b> (${c[1]}) อายุ 14 ปี`);pend=null;auto=false;P.focus=9;roll()}
+function roll(){
+ const A=document.getElementById('app');P.rolling=true;const fin=P.club,fp=P.pos;let n=0;const tot=26;
+ const tick=()=>{const last=n>=tot,c=last?fin:CL[I(0,CL.length-1)],ps=last?fp:POS[I(0,3)];
+  A.innerHTML=`<div class="card roll ${last?'land':''}"><div class="mu">${last?'ชะตาของคุณคือ…':'กำลังสุ่มชะตาชีวิต…'}</div><div class="rc">${c[0]}</div><div class="mu">${c[1]} · ระดับ ${c[2]}</div><div class="rp">${ps[1]}</div>${last?`<div class="mu">${P.name}</div>`:''}</div>`;
+  if(last){setTimeout(()=>{P.rolling=false;left=YT;startTimer();draw()},1100);return}
+  n++;setTimeout(tick,50+n*n*.25)};tick()}
+function startTimer(){stopTimer();timer=setInterval(()=>{if(!P||P.over||pend||paused||P.rolling)return;left-=.1*spd;if((tkc+=spd)>=22){tkc=0;addFeed()}
+ const b=document.getElementById('tb'),t=document.getElementById('tt');if(b)b.style.width=Math.max(0,left/YT*100)+'%';if(t)t.textContent=Math.max(0,Math.ceil(left));
+ if(left<=0)step(P.focus)},100)}
+function stopTimer(){clearInterval(timer);timer=null}
+function log(t,b){P.log.unshift(`<p class="${b?'bd':''}">${P.over||P.age>14?'อายุ '+P.age+': ':''}${t}</p>`)}
+function tierNow(){return Math.min(5,P.tier+(P.loan?1:0))}
+function level(){return cae()-TH[tierNow()]}
+function setClub(t,why){const l=CL.filter(c=>c[2]===t&&c[0]!==P.club[0]);P.club=l[I(0,l.length-1)];P.tier=t;P.acad=P.club[3];P.clubs.push(P.club[0]);log(`${why} <b>${P.club[0]}</b> (${P.club[1]})`)}
+function year(f){
+ P.age++;ene(FE[f==null?9:f]);const d=level(),a=P.age;let apps=0,role;
+ if(a<18){role='เล่นในทีมเยาวชน'}
+ else if(d>=0){role='ตัวจริง';apps=I(24,38)}else if(d>-8){role='ตัวสำรองที่ได้ลงเล่นบ้าง';apps=I(6,22)}else{role='นั่งสำรองเป็นส่วนใหญ่';apps=I(0,6)}
+ let g=a<=21?.22*(P.pa-P.ca):a<=26?.12*(P.pa-P.ca):a<=30?0:-(a-30)*.9-.8;
+ g+=(f===4?2.2:f===3?0.4:1.2)+P.acad*.35-.8+(apps>20?.8:0)+(P.loan?.8:0)+G();
+ if(a<=26&&g>0)g=Math.min(g,P.pa-P.ca+1.5);
+ P.ca=Math.max(10,Math.round(P.ca+g));skUp(f,g);
+ const shd=P.shield;P.shield=0;if(Math.random()<.11-(shd?.08:0)+(a>30?.07:0)+(f===4?.1:f===3?-.06:0)){if(Math.random()<.2){const x=I(2,5);P.inj={l:x};P.ca=Math.max(10,P.ca-x);apps=Math.floor(apps*.3);log('บาดเจ็บรุนแรง พักยาวทั้งฤดูกาล ฟอร์มตกลงมาก',1)}else{P.inj={l:0};apps=Math.floor(apps*.75);log('บาดเจ็บเล็กน้อย พักไปหลายนัด',1)}}
+ const goals=Math.round(apps*P.pos[2]*(cae()/60)*(.5+se('sh')/100)*R(.6,1.3)),ast=Math.round(apps*AR[P.pos[0]]*(.5+se('ps')/100)*(cae()/60)*R(.6,1.3));const cs=Math.min(apps,Math.round(apps*CR[P.pos[0]]*(.5+se('df')/100)*(cae()/60)*R(.6,1.2)));P.cs+=cs;P.apps+=apps;P.goals+=goals;P.ast+=ast;pay();season(apps,goals,ast,cs);P.peak=Math.max(P.peak,P.ca);
+ log(`${role}${apps?` ลงเล่น ${apps} นัด ${goals?`ยิง ${goals} ประตู `:''}${ast?`แอสซิสต์ ${ast} `:''}${cs?`ไม่เสียประตู ${cs} นัด`:''}`:''} · ความสามารถ ${P.ca} · ⚡${P.en}${enPct()?` (ล้า ค่าสถานะลด ${enPct()}%)`:''}${P.loan?' (ยืมตัว)':''}`);
+ if(P.loan){P.loan=false;log('กลับสู่สโมสรต้นสังกัด')}
+ if(a===17){const t=P.ca-TH[P.tier];if(t>=-12){log('ได้สัญญาอาชีพฉบับแรก ')}else if(P.tier<5){setClub(Math.min(5,P.tier+1),'ถูกปล่อยตัวจากอคาเดมี แต่ได้โอกาสใหม่ที่');}else{log('ถูกปล่อยตัวและไม่มีสโมสรรับ คุณเลิกเล่นอาชีพ',1);return end()}}
+ if(a>=18&&a<=31){
+  const t=P.ca-TH[P.tier];
+  if(t>=6&&P.tier>1&&Math.random()<.5){const nt=P.tier-1;pend={q:`สโมสรระดับสูงกว่าเสนอสัญญา ย้ายไปแข่งขันในระดับที่สูงขึ้น แต่โอกาสลงเล่นอาจน้อยลง`,y:()=>setClub(nt,'ย้ายไปอยู่'),n:()=>log('ปฏิเสธข้อเสนอและอยู่กับทีมเดิม')}}
+  else if(t<=-10){if(Math.random()<.5&&P.tier<5){setClub(P.tier+1,'ถูกปล่อยตัวและไปเริ่มใหม่ที่')}else{pend={q:'คุณไม่ได้ลงสนามเลย ทีมเสนอให้ยืมตัวไปสโมสรเล็กกว่า 1 ปีเพื่อสะสมเวลาลงเล่น',y:()=>{P.loan=true;log('ตกลงไปเล่นยืมตัว')},n:()=>log('ปฏิเสธและอยู่เป็นตัวสำรองต่อ')}}}
+ }
+ if(a>=20&&a<=33&&cae()>=82&&Math.random()<.35){const c=I(2,10);P.caps+=c;log(`ติดทีมชาติ ลงเล่น ${c} นัด `)}
+ if(!pend&&Math.random()<.5)event();
+ if(a>=33&&(P.ca<TH[tierNow()]-10||Math.random()<(a-32)*.18)||a>=38){log('ประกาศแขวนสตั๊ด');return end()}
+}
+function end(){P.over=true;auto=false;pend=null;draw()}
+function verdict(){const p=P.peak;if(p>=88)return'ตำนานระดับโลก';if(p>=78)return'ดาวเด่นของลีกสูงสุด';if(p>=66)return'นักเตะอาชีพที่มั่นคง';if(p>=52)return'นักเตะอาชีพลีกรอง';return'ไม่ได้เป็นนักเตะอาชีพ แต่ยังรักฟุตบอลอยู่'}
+function step(f){if(P.over||pend||P.rolling)return;year(f);left=YT;feed=[];tkc=0;injQ();if(P.over)stopTimer();draw()}
+function ans(y){const p=pend;pend=null;p[y?'y':'n']();injQ();draw()}
+function opt(i){const p=pend;pend=null;P.ch[p.ei]=p.o[i].t;p.o[i].f();injQ();draw()}
+const cc=n=>{P.ca=Math.max(10,Math.min(99,P.ca+n))};
+const FE=[-4,2,6,45,-18,-2,-2,-2,-2,5];
+const ene=n=>{P.en=Math.max(0,Math.min(100,Math.round(P.en+n)))};
+const enF=e=>e>=70?1:1-.4*(1-e/70),enPct=e=>Math.round((1-enF(e===undefined?P.en:e))*100);
+const eff=v=>Math.max(1,Math.round(v*enF(P.en))),cae=()=>eff(P.ca),se=k=>eff(P.sk[k]);
+const sp=c=>{c=Math.round(Math.min(c,P.earn));P.earn-=c;return` (−$${fm(c)})`},spp=r=>sp(P.earn*r),SBt=r=>SB[tierNow()]*r;
+
+const LG=[['th','ไทย'],['en','English'],['es','Español'],['pt','Português'],['id','Indonesia'],['zh','中文'],['ja','日本語']],LI={en:0,es:1,pt:2,id:3,zh:4,ja:5};
+let LANG='th';try{LANG=localStorage.getItem('lang')||'th'}catch(e){}
+const D=[
+['เด็กอคาเดมี','Academy Kid|Chico de Academia|Garoto da Academia|Anak Akademi|学院少年|アカデミーの少年'],
+['สุ่มเกิดเป็นเด็กอคาเดมี','Start as a random academy kid|Nacer como chico de academia al azar|Nascer como garoto de academia aleatório|Lahir acak sebagai anak akademi|随机成为学院少年|ランダムでアカデミーの少年に'],
+['ความสามารถปัจจุบัน','Current ability|Habilidad actual|Habilidade atual|Kemampuan saat ini|当前能力|現在の能力'],
+['(ปกติ ','(normal |(normal |(normal |(normal |(正常 |(通常 '],
+['ค่าสถานะเต็ม 100%','Stats at 100%|Stats al 100%|Atributos em 100%|Status 100%|状态 100%|ステータス100%'],
+['ค่าสถานะเต็ม','Stats full|Stats completos|Atributos cheios|Status penuh|状态满值|ステータス満タン'],
+['ค่าสถานะลดชั่วคราว','Stats temporarily reduced|Stats reducidos temporalmente|Atributos reduzidos temporariamente|Status turun sementara|状态暂时下降|ステータス一時低下'],
+['ค่าสถานะลด','Stats reduced|Stats reducidos|Atributos reduzidos|Status turun|状态下降|ステータス低下'],
+['(ชั่วคราว)','(temporary)|(temporal)|(temporário)|(sementara)|(暂时)|(一時的)'],
+['พลังงานต่ำกว่า 70 ค่าสถานะจะลดลงตามพลังงาน (สูงสุด −40%)','Below 70 energy, stats drop with energy (max −40%)|Con energía bajo 70, los stats bajan (máx −40%)|Abaixo de 70 de energia, os atributos caem (máx −40%)|Energi di bawah 70 menurunkan status (maks −40%)|能量低于70时状态随之下降(最多−40%)|エネルギー70未満でステータス低下(最大−40%)'],
+['⚡ พลังงาน','⚡ Energy|⚡ Energía|⚡ Energia|⚡ Energi|⚡ 能量|⚡ エネルギー'],
+['สดชื่น','Fresh|Fresco|Descansado|Segar|精力充沛|元気'],
+['เริ่มล้า','Tiring|Cansándose|Cansando|Mulai lelah|开始疲劳|疲れ気味'],
+['เหนื่อยล้า','Tired|Cansado|Cansado|Lelah|疲惫|疲労'],
+['หมดแรง','Exhausted|Agotado|Exausto|Kehabisan tenaga|精疲力竭|ヘトヘト'],
+['ลงเล่น {n} นัด','Apps {n}|Partidos {n}|Jogos {n}|Main {n} laga|出场 {n} 场|出場 {n} 試合'],
+['ไม่เสียประตู {n} นัด','Clean sheets {n}|Porterías a cero {n}|Jogos sem sofrer gol {n}|Clean sheet {n}|零封 {n} 场|無失点 {n} 試合'],
+['ทีมชาติ {n} นัด','Caps {n}|Internacional {n}|Seleção {n}|Timnas {n}|国家队 {n} 场|代表 {n} 試合'],
+['แอสซิสต์','Assists|Asistencias|Assistências|Assist|助攻|アシスト'],
+['ประตู','Goals|Goles|Gols|Gol|进球|ゴール'],
+['ยอดสูงสุด','Peak|Máximo|Pico|Puncak|巅峰|最高'],
+['เงินเดือน','Salary|Salario|Salário|Gaji|薪水|年俸'],
+['/ปี','/yr|/año|/ano|/thn|/年|/年'],
+['รายได้รวม','Total earnings|Ingresos totales|Ganhos totais|Total pendapatan|总收入|総収入'],
+['อายุ','Age|Edad|Idade|Usia|年龄|年齢'],
+['ระดับ','Tier|Nivel|Nível|Level|级别|ランク'],
+['ผู้รักษาประตู','Goalkeeper|Portero|Goleiro|Kiper|守门员|ゴールキーパー'],
+['กองหลังยอดเยี่ยมแห่งปี','Best Defender|Mejor defensa|Melhor zagueiro|Bek Terbaik|最佳后卫|最優秀DF'],
+['กองหลัง','Defender|Defensa|Zagueiro|Bek|后卫|ディフェンダー'],
+['กองกลาง','Midfielder|Centrocampista|Meio-campista|Gelandang|中场|ミッドフィルダー'],
+['กองหน้า','Forward|Delantero|Atacante|Penyerang|前锋|フォワード'],
+['ดาวซัลโว','Top Scorer|Pichichi|Artilheiro|Top Skor|最佳射手|得点王'],
+['ดาวแอสซิสต์','Top Assister|Máx. asistente|Líder de assistências|Raja Assist|助攻王|アシスト王'],
+['ถุงมือทองคำ','Golden Glove|Guante de Oro|Luva de Ouro|Sarung Tangan Emas|金手套|ゴールデングラブ'],
+['ผู้เล่นยอดเยี่ยมแห่งปี','Player of the Year|Jugador del año|Jogador do ano|Pemain Terbaik Tahun Ini|年度最佳球员|年間最優秀選手'],
+['เซฟลูกยิง','Shot-stopping|Paradas|Defesas|Tangkap tembakan|扑救|セーブ'],
+['จ่ายบอล','Distribution|Distribución|Distribuição|Distribusi|出球|配球'],
+['คุมพื้นที่','Area command|Dominio del área|Domínio da área|Kuasai area|控制禁区|エリア支配'],
+['การรับลูก','Catching|Atrapar balón|Segurar bola|Menangkap bola|接球|キャッチング'],
+['เลี้ยงบอล','Dribbling|Regate|Drible|Dribel|盘带|ドリブル'],
+['เกมรับ','Defending|Defensa|Defesa|Bertahan|防守|守備'],
+['ยิง','Shooting|Tiro|Chute|Tembakan|射门|シュート'],
+['ส่ง','Passing|Pase|Passe|Umpan|传球|パス'],
+['ฝึกทักษะเฉพาะทาง','Skill training|Entrenar habilidades|Treino de habilidades|Latihan keterampilan|专项技能训练|スキル練習'],
+['ฝึก','Train |Entrenar |Treinar |Latih |训练|練習 '],
+['ร่างกาย','Body|Cuerpo|Corpo|Fisik|身体|フィジカル'],
+['เทคนิค','Technique|Técnica|Técnica|Teknik|技术|テクニック'],
+['จิตใจและวินัย','Mind & Discipline|Mente y disciplina|Mente e disciplina|Mental & Disiplin|心态与纪律|メンタルと規律'],
+['พักผ่อน','Rest|Descanso|Descanso|Istirahat|休息|休養'],
+['ซ้อมหนักพิเศษ','Extra Hard Training|Entrenamiento extra duro|Treino extra pesado|Latihan ekstra berat|特别加练|特別ハードトレーニング'],
+['สมดุล','Balanced|Equilibrado|Equilibrado|Seimbang|均衡|バランス'],
+['พื้นฐาน','Basics|Básico|Básico|Dasar|基础|基本'],
+['พิเศษ','Special|Especial|Especial|Khusus|特别|スペシャル'],
+['ฟิตเนสและความแข็งแกร่ง · โตปกติ','Fitness & strength · normal growth|Forma y fuerza · crecimiento normal|Físico e força · crescimento normal|Kebugaran & kekuatan · tumbuh normal|体能与力量 · 正常成长|体力と強さ · 通常成長'],
+['ฝึกพื้นฐานเทคนิค · โตปกติ','Basic technique · normal growth|Técnica básica · crecimiento normal|Técnica básica · crescimento normal|Teknik dasar · tumbuh normal|基础技术 · 正常成长|基礎技術 · 通常成長'],
+['ใจนิ่ง วินัยดี · โตปกติ','Calm & disciplined · normal growth|Calma y disciplina · crecimiento normal|Calma e disciplina · crescimento normal|Tenang & disiplin · tumbuh normal|沉稳自律 · 正常成长|冷静で規律 · 通常成長'],
+['ฟื้นพลังงานเต็มที่ · ทักษะไม่เพิ่ม','Big energy recovery · no skill gain|Gran recuperación · sin mejora de habilidad|Grande recuperação · sem ganho de habilidade|Pulih energi besar · skill tetap|大幅恢复能量 · 技能不增长|大幅回復 · スキル成長なし'],
+['โตเร็วสุด · เสี่ยงบาดเจ็บสูง','Fastest growth · high injury risk|Máximo crecimiento · alto riesgo de lesión|Maior crescimento · alto risco de lesão|Tumbuh tercepat · risiko cedera tinggi|成长最快 · 伤病风险高|最速成長 · 怪我リスク高'],
+['โตเพิ่ม +3–6 ต่อปี','+3–6 skill per year|+3–6 de habilidad al año|+3–6 de habilidade por ano|+3–6 skill per tahun|每年 +3–6 技能|年間 +3〜6'],
+['ทุกทักษะโตเพิ่ม +2','All skills +2|Todas las habilidades +2|Todas as habilidades +2|Semua skill +2|所有技能 +2|全スキル +2'],
+['ปีนี้คุณจะเน้นอะไร · เหลือ','Focus for this year · time left|Enfoque de este año · quedan|Foco deste ano · restam|Fokus tahun ini · sisa|今年的重点 · 剩余|今年の重点 · 残り'],
+['วินาที','s|s|s|dtk|秒|秒'],
+['เลือก','Selected|Elegido|Escolhido|Dipilih|已选|選択'],
+['→ ปีนี้เล่นด้วยพลังงาน ~','→ playing this year at energy ~|→ jugarás con energía ~|→ jogará com energia ~|→ main tahun ini dengan energi ~|→ 今年以能量 ~|→ 今年のエネルギー ~'],
+['ข้ามไปปีถัดไป ▶','Next year ▶|Siguiente año ▶|Próximo ano ▶|Tahun berikutnya ▶|下一年 ▶|翌年へ ▶'],
+['▶ เล่นต่อ','▶ Resume|▶ Reanudar|▶ Continuar|▶ Lanjut|▶ 继续|▶ 再開'],
+['⏸ หยุดเวลา','⏸ Pause|⏸ Pausa|⏸ Pausar|⏸ Jeda|⏸ 暂停|⏸ 一時停止'],
+['⏩ เร็ว ×','⏩ Speed ×|⏩ Velocidad ×|⏩ Velocidade ×|⏩ Kecepatan ×|⏩ 速度 ×|⏩ 速度 ×'],
+['📣 เหตุการณ์','📣 Event|📣 Evento|📣 Evento|📣 Kejadian|📣 事件|📣 イベント'],
+['ทีมกำลังซ้อมตามโปรแกรม…','The team is training as planned…|El equipo entrena según el plan…|O time treina conforme o plano…|Tim berlatih sesuai jadwal…|球队正在按计划训练…|チームは予定通り練習中…'],
+['ตารางลีก (อายุ','League table (age|Tabla de liga (edad|Tabela da liga (idade|Klasemen liga (usia|联赛积分榜(年龄|リーグ順位表(年齢'],
+['แชมป์ {n} สมัย','Titles: {n}|Campeonatos: {n}|Títulos: {n}|Juara: {n}x|冠军 {n} 次|優勝 {n} 回'],
+['สรุปอาชีพ','Career summary|Resumen de carrera|Resumo da carreira|Ringkasan karier|职业生涯总结|キャリア総括'],
+['เกิดใหม่แบบสุ่ม','Be reborn at random|Renacer al azar|Renascer aleatoriamente|Lahir ulang acak|随机重生|ランダムで転生'],
+['จบอาชีพ:','Career over:|Fin de carrera:|Fim de carreira:|Karier berakhir:|生涯结束:|引退:'],
+['คุณบาดเจ็บรุนแรง เลือกวิธีรักษา','Serious injury. Choose a treatment.|Lesión grave. Elige un tratamiento.|Lesão grave. Escolha o tratamento.|Cedera parah. Pilih perawatan.|严重受伤,请选择治疗方式。|重傷です。治療法を選んでください。'],
+['คุณบาดเจ็บเล็กน้อย เลือกวิธีรักษา','Minor injury. Choose a treatment.|Lesión leve. Elige un tratamiento.|Lesão leve. Escolha o tratamento.|Cedera ringan. Pilih perawatan.|轻伤,请选择治疗方式。|軽傷です。治療法を選んでください。'],
+['พบแพทย์เฉพาะทาง','See a specialist|Ver a un especialista|Consultar especialista|Temui dokter spesialis|看专科医生|専門医に診てもらう'],
+['ใช้แพทย์สโมสร','Use the club doctor|Médico del club|Médico do clube|Dokter klub|找俱乐部医生|クラブドクター'],
+['แพทย์เฉพาะทางรักษาได้ผลดี ฟื้นตัวเร็วและเสี่ยงบาดเจ็บซ้ำน้อยลง','The specialist treated you well: faster recovery, lower re-injury risk|El especialista te trató bien: recuperación rápida y menos riesgo de recaída|O especialista tratou bem: recuperação rápida e menor risco de nova lesão|Spesialis merawat dengan baik: pulih cepat, risiko cedera ulang turun|专科治疗效果很好,恢复更快,再次受伤风险降低|専門医の治療で回復が早まり、再負傷リスクも低下'],
+['แพทย์สโมสรให้พักฟื้นตามขั้นตอน ร่างกายได้พักเต็มที่','The club doctor prescribed proper rest: your body fully recharged|El médico del club indicó reposo: el cuerpo se recargó|O médico do clube indicou repouso: o corpo recarregou|Dokter klub menyarankan istirahat: tubuh pulih penuh|俱乐部医生安排休养,身体充分恢复|クラブドクターの指示で十分に休養できた']
+];
+const DP=D.map(([k,v])=>[k,v.split('|')]).sort((a,b)=>b[0].length-a[0].length);
+function tr(h){if(LANG==='th')return h;const i=LI[LANG];for(const [k,v] of DP){if(k.includes('{n}'))h=h.replace(new RegExp(k.replace(/[.*+?^$()|[\]\\]/g,'\\$&').replace('{n}','([^<\\s]+)'),'g'),v[i].replace('{n}','$1'));else if(h.includes(k))h=h.split(k).join(v[i])}return h}
+function initLang(){const e=document.getElementById('lang');if(!e.options.length)LG.forEach(x=>e.add(new Option(x[1],x[0])));e.value=LANG;document.getElementById('ttl').textContent='⚽ '+tr('เด็กอคาเดมี');document.title=tr('เด็กอคาเดมี')+' · '+(LANG==='th'?'เกมจำลองชีวิตนักฟุตบอล':'Football Life Sim')}
+async function translateVisible(){
+ if(LANG==='th')return;
+ const langMap={en:'en',es:'es',pt:'pt',id:'id',zh:'zh-CN',ja:'ja'}, target=langMap[LANG]||'en';
+ const root=document.getElementById('app'); if(!root)return;
+ const nodes=[]; const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);
+ while(walker.nextNode()){const n=walker.currentNode, t=n.nodeValue.trim();if(t&&/[ก-๙]/.test(t)&&t.length<900)nodes.push([n,n.nodeValue]);}
+ const cacheKey='academy-translations-v1-'+LANG;let cache={};try{cache=JSON.parse(localStorage.getItem(cacheKey)||'{}')}catch(e){}
+ await Promise.all(nodes.map(async ([node,original])=>{
+  const t=original.trim(); if(!/[ก-๙]/.test(t))return;
+  if(cache[t]){node.nodeValue=original.replace(t,cache[t]);return}
+  try{
+   const url='https://translate.googleapis.com/translate_a/single?client=gtx&sl=th&tl='+encodeURIComponent(target)+'&dt=t&q='+encodeURIComponent(t);
+   const res=await fetch(url);if(!res.ok)return;const data=await res.json();
+   const translated=(data[0]||[]).map(x=>x[0]||'').join('');
+   if(translated){cache[t]=translated;node.nodeValue=original.replace(t,translated)}
+  }catch(e){}
+ }));
+ try{localStorage.setItem(cacheKey,JSON.stringify(cache))}catch(e){}
+}
+const oldDraw=draw;
+draw=function(){oldDraw();if(LANG!=='th')setTimeout(()=>translateVisible(),0)};
+
+function injQ(){if(!P||P.over||pend||!P.inj)return;const l=P.inj.l,a=SBt(l?.14:.06),b=SBt(l?.02:.01);P.inj=null;
+ pend={q:tr(l?'คุณบาดเจ็บรุนแรง เลือกวิธีรักษา':'คุณบาดเจ็บเล็กน้อย เลือกวิธีรักษา'),ei:'inj',o:[
+ {t:tr('พบแพทย์เฉพาะทาง')+` (−$${fm(a)} · ⚡−5)`,f:()=>{const s=sp(a);ene(-5);P.shield=1;if(l)P.ca=Math.min(99,P.ca+Math.ceil(l*.6));log(tr('แพทย์เฉพาะทางรักษาได้ผลดี ฟื้นตัวเร็วและเสี่ยงบาดเจ็บซ้ำน้อยลง')+s)}},
+ {t:tr('ใช้แพทย์สโมสร')+` (−$${fm(b)} · ⚡+20)`,f:()=>{const s=sp(b);ene(20);if(l)P.ca=Math.min(99,P.ca+Math.floor(l*.2));log(tr('แพทย์สโมสรให้พักฟื้นตามขั้นตอน ร่างกายได้พักเต็มที่')+s)}}]}}
+let feed=[],tkc=0;
+const FM=[['วิ่งสปรินต์ซ้ำ 10 เที่ยวบนลู่สนาม','ยกเวทเสริมกล้ามขาในยิม','ฝึกสร้างแกนกลางลำตัวด้วยท่าแพลงก์','วิ่งขึ้นเนินท้ายซ้อม ขาแทบไม่ไหว'],
+['ฝึกรับ-ส่งสองจังหวะกับเพื่อนร่วมทีม','ซ้อมคุมบอลด้วยเท้าซ้ายล้วน','โค้ชให้ฝึกเปิดบอลโค้งจากริมเส้น','ทำสถานีฝึกเทคนิคสลับกัน 5 จุด'],
+['นั่งสมาธิก่อนซ้อมเพื่อเคลียร์ใจ','โค้ชคุยเรื่องวินัยและเวลานอน','ดูวิดีโอเกมเก่าเพื่อเรียนรู้จากความผิดพลาด','ฝึกยิงจุดโทษภายใต้แรงกดดัน'],
+['นอนพักเต็มที่และกินอาหารตามแผน','แช่น้ำเย็นและยืดเหยียดกล้ามเนื้อ','ฟังเพลงเบา ๆ ให้ร่างกายฟื้นตัว','นักกายภาพนวดคลายกล้ามเนื้อให้'],
+['โค้ชสั่งซ้อมเพิ่มอีกเซ็ตหลังเลิกทีม','ซ้อมสองรอบต่อวัน เหงื่อชุ่มทั้งตัว','กล้ามเนื้อล้า แต่ยังฝืนซ้อมต่อ','วิ่งซ้ำความเร็วสูงจนหายใจไม่ทัน'],0,0,0,0,
+['สลับฝึกทุกทักษะตามตารางที่วางไว้','ซ้อมเบา ๆ ผสมการยืดเหยียด','เล่นเกมเล็กในสนามแคบกับเพื่อนร่วมทีม','จดบันทึกการซ้อมประจำวัน']];
+const FS=['ซ้อม{n}ซ้ำ ๆ จนเริ่มจับจังหวะได้','โค้ชคอยแก้ท่าทาง{n}ทีละจุด','ฝึก{n}ภายใต้แรงกดดันจากการประกบ','ถ่ายวิดีโอ{n}ไว้ดูทบทวนตอนเย็น'],
+FX=['ผู้ช่วยโค้ชแจกน้ำให้ทุกคน','ลมเย็นพัดผ่านสนามซ้อมตอนเช้า','เพื่อนร่วมทีมแซวกันระหว่างพักเบรก','โค้ชเป่านกหวีดเรียกรวมตัวกลางสนาม','แฟนบอลตัวน้อยมายืนดูรอบสนาม'],
+FT=['ขาเริ่มหนัก ก้าวไม่ออกเหมือนเดิม','หายใจหอบ สมาธิเริ่มหลุด','ร่างกายส่งสัญญาณว่าต้องพักแล้ว'];
+const feedHtml=()=>feed.length?feed.map((m,i)=>`<p style="opacity:${1-i*.3}">${i?'':'▸ '}${m}</p>`).join(''):'<p class="mu">▸ ทีมกำลังซ้อมตามโปรแกรม…</p>';
+function addFeed(){if(!P||P.over||P.rolling||pend)return;const f=P.focus,sk=f>=5&&f<=8,r=Math.random(),pool=P.en<40&&r<.5?FT:r<.8?(sk?FS:FM[f]):FX;
+ const m=pool[I(0,pool.length-1)].replace('{n}',sk?SKN()[f-5]:'');if(m===feed[0])return;feed=[m,...feed].slice(0,3);const e=document.getElementById('fd');if(e)e.innerHTML=feedHtml()}
+
+const EV=[
+{a:[14,17],q:'โค้ชเห็นว่าคุณมีแรงเหลือ เสนอให้ซ้อมเพิ่มหลังเลิกทีมทุกวัน',o:[
+ {t:'ซ้อมเพิ่มเต็มที่',f:()=>{ene(-12);cc(2);if(Math.random()<.25){cc(-2);log('ซ้อมหนักเกินไปจนบาดเจ็บกล้ามเนื้อ',1)}else log('ซ้อมเพิ่มแล้วเก่งขึ้นชัดเจน')}},
+ {t:'ซ้อมตามตารางปกติ',f:()=>{cc(1);log('รักษาจังหวะการซ้อมเดิม')}},
+ {t:'ไปเตะบอลสนุก ๆ กับเพื่อน',f:()=>{ene(10);log('ได้ผ่อนคลายกับเพื่อน ๆ ความสุขเต็มเปี่ยม')}}]},
+{a:[14,19],q:'ครูที่โรงเรียนเตือนว่าคุณเริ่มตามเพื่อนไม่ทัน ต้องเลือกว่าจะจัดสรรเวลาอย่างไร',o:[
+ {t:'ตั้งใจเรียนควบคู่',f:()=>{ene(-8);P.edu=1;cc(-1);log('แบ่งเวลาไปเรียน ฟอร์มตกเล็กน้อยแต่ชีวิตสมดุลขึ้น')}},
+ {t:'มุ่งฟุตบอลเต็มที่',f:()=>{ene(-5);cc(1);log('ทุ่มเวลาให้ฟุตบอลทั้งหมด')}}]},
+{a:[14,17],c:()=>P.ca>=38,q:'ได้รับเรียกขึ้นไปซ้อมกับทีมชุดใหญ่หนึ่งสัปดาห์',o:[
+ {t:'เล่นเต็มที่ พิสูจน์ตัวเอง',f:()=>{ene(-10);if(Math.random()<.6){cc(2);log('ซ้อมกับรุ่นพี่ได้ผล โค้ชจดชื่อคุณไว้')}else{cc(-1);log('ประหม่าจนพลาดบ่อย เสียความมั่นใจ',1)}}},
+ {t:'เน้นดูและเรียนรู้',f:()=>{cc(1);log('ได้เรียนรู้จากรุ่นพี่มากมาย')}}]},
+{a:[14,25],c:()=>P.ca>=45,q:'ทีมชาติรุ่นเยาวชนเรียกไปแคมป์คัดตัว',o:[
+ {t:'ไปแคมป์',f:()=>{ene(-10);if(Math.random()<.6){P.caps+=I(1,4);cc(1);log('ผ่านการคัดตัวและได้ติดทีมชาติเยาวชน ')}else log('ไม่ผ่านการคัดตัว แต่ได้ประสบการณ์')}},
+ {t:'ขอพักเพราะเหนื่อยสะสม',f:()=>{ene(15);log('ปฏิเสธเพื่อรักษาร่างกาย')}}]},
+{a:[15,21],c:()=>P.tier>1,q:'แมวมองสโมสรใหญ่กว่ามาดูเกมของคุณ และชวนไปทดสอบฝีเท้า',o:[
+ {t:'ไปทดสอบ',f:()=>{if(Math.random()<(cae()>=TH[P.tier]-6?.55:.25))setClub(P.tier-1,'ผ่านการทดสอบ ย้ายไปอยู่');else log('ไม่ผ่านการทดสอบ กลับมาซ้อมต่อ',1)}},
+ {t:'อยู่กับทีมเดิม',f:()=>{cc(1);log('ตัดสินใจอยู่ต่อ โค้ชเห็นความจริงใจ')}}]},
+{a:[18,31],q:'สโมสรเซ็นผู้เล่นคนใหม่ในตำแหน่งเดียวกับคุณ',o:[
+ {t:'ท้าชิงตำแหน่งตรง ๆ',f:()=>{if(Math.random()<.5){cc(2);log('ซ้อมสู้จนโค้ชให้โอกาส')}else{cc(-1);log('สู้ไม่ได้ ต้องไปนั่งสำรอง',1)}}},
+ {t:'ขอยืมตัวไปเก็บเกมส์',f:()=>{P.loan=true;log('ขอยืมตัวไปทีมอื่นหนึ่งฤดูกาล')}},
+ {t:'ยอมเป็นตัวสำรอง',f:()=>log('ยอมรับบทบาทและรอโอกาส')}]},
+{a:[18,34],q:'สโมสรเปลี่ยนผู้จัดการทีม ระบบการเล่นเปลี่ยนไปทั้งหมด',o:[
+ {t:'ปรับตัวตามระบบใหม่',f:()=>{cc(1);log('ปรับตัวได้เร็ว')}},
+ {t:'ขอคุยตรง ๆ กับโค้ช',f:()=>{if(Math.random()<.5){cc(2);log('โค้ชประทับใจที่กล้าพูด')}else{cc(-1);log('โค้ชไม่ชอบที่คุณพูดตรง ๆ',1)}}}]},
+{a:[18,33],q:'แบรนด์สปอนเซอร์ติดต่อมา อยากให้คุณเป็นพรีเซนเตอร์',o:[
+ {t:'รับงาน',f:()=>{ene(-8);cc(-1);log('ได้เงินเพิ่มและมีชื่อเสียง แต่เสียสมาธิกับงานไปบ้าง')}},
+ {t:'ปฏิเสธและโฟกัสเกม',f:()=>{cc(1);log('ตั้งหน้าตั้งตาซ้อมต่อ')}}]},
+{a:[18,32],q:'เพื่อนชวนไปปาร์ตี้คืนก่อนเกมสำคัญ',o:[
+ {t:'ไปเฉลิมฉลอง',f:()=>{ene(-20);if(Math.random()<.35){cc(-3);log('กลายเป็นข่าวเสียหาย ฟอร์มตกหนัก',1)}else{cc(-1);log('สนุกดี แต่เกมวันรุ่งขึ้นเหนื่อยเกินไป')}}},
+ {t:'นอนพักให้เต็มที่',f:()=>{ene(20);cc(1);log('พักผ่อนเต็มที่และเล่นได้ดี')}}]},
+{a:[20,35],q:'อาการบาดเจ็บเรื้อรังที่เข่ากลับมากวนใจ',o:[
+ {t:'ผ่าตัดเดี๋ยวนี้',f:()=>{cc(-1);log('ผ่าตัดและฟื้นตัวเต็มที่ ปัญหาหายขาด')}},
+ {t:'ฝืนเล่นต่อ',f:()=>{if(Math.random()<.5){cc(-4);log('อาการแย่ลงจนพักยาว',1)}else log('โชคดี ฝืนผ่านไปได้')}}]},
+{a:[24,34],q:'สโมสรจากลีกที่ให้ค่าเหนื่อยสูงเสนอสัญญาก้อนโต',o:[
+ {t:'ย้ายไปรับเงินก้อนโต',f:()=>setClub(Math.min(5,Math.max(3,P.tier)),'ย้ายไปรับเงินก้อนโตที่')},
+ {t:'ปฏิเสธและอยู่เล่นลีกที่ท้าทาย',f:()=>log('ปฏิเสธเงินก้อนโตเพื่อฟุตบอลที่ท้าทาย')}]},
+{a:[29,36],c:()=>P.tier<5,q:'ร่างกายเริ่มไม่ไหว มีสโมสรลีกล่างเสนอให้ลงไปเล่นเป็นตัวหลัก',o:[
+ {t:'ลงไปเล่นลีกล่าง',f:()=>setClub(P.tier+1,'ลงไปเล่นเป็นตัวหลักที่')},
+ {t:'สู้ต่อที่ทีมเดิม',f:()=>log('ตัดสินใจสู้ต่อที่ทีมเดิม')}]},
+{a:[17,33],c:()=>P.pos[0]!=='GK'&&P.sk.sh>=40,q:'ทีมได้ฟรีคิกในตำแหน่งอันตรายช่วงท้ายเกม ทั้งสนามมองมาที่คุณ',o:[
+ {t:'ขอเป็นคนเตะเอง',f:()=>{if(Math.random()<.2+se('sh')/160){P.goals++;cc(2);log('ฟรีคิกเข้าตาข่ายจนสนามแทบถล่ม ')}else{cc(-1);log('ฟรีคิกลอยข้ามคาน เสียความมั่นใจนิดหน่อย',1)}}},
+ {t:'ยกให้เพื่อนเตะ',f:()=>log('ยอมให้เพื่อนร่วมทีมเป็นคนเตะ')}]},
+{a:[17,33],c:()=>P.pos[0]!=='GK',q:'เกมดาร์บี้แมตช์ คุณถูกประกบสองคนตลอดเกม',o:[
+ {t:'เลี้ยงบอลผ่านตัวประกบ',f:()=>{if(Math.random()<.2+se('dr')/130){cc(2);log('เลี้ยงผ่านสองคนเข้าไปสร้างโอกาสตัดสินเกม')}else{cc(-1);log('เสียบอลหลายครั้งจนโดนแฟนบอลโห่',1)}}},
+ {t:'ส่งบอลต่อให้เพื่อน',f:()=>{if(Math.random()<.3+se('ps')/130){cc(1);log('จ่ายบอลทะลุแนวรับให้ทีมได้ประตู')}else log('จ่ายบอลไม่เข้าจังหวะ เกมจบเสมอ')}},
+ {t:'ยิงไกลเสี่ยงดวง',f:()=>{if(Math.random()<.1+se('sh')/200){P.goals++;cc(2);log('ยิงไกลเข้าประตูสุดสวย ')}else log('ยิงไกลไปไม่ถึงกรอบ')}}]},
+{a:[18,36],c:()=>P.pos[0]==='GK',q:'เกมตัดสินแชมป์ ทีมคู่แข่งได้จุดโทษ คุณต้องเลือกมุมพุ่ง',o:[
+ {t:'พุ่งดักมุมที่ศึกษามาจากวิดีโอ',f:()=>{if(Math.random()<.2+se('sh')/200){cc(2);log('เซฟจุดโทษได้ สร้างวีรกรรมให้ทีม ')}else{cc(-1);log('เลือกมุมผิด ลูกจุดโทษเข้าประตู',1)}}},
+ {t:'ยืนรอตามสัญชาตญาณ',f:()=>{if(Math.random()<.2){cc(2);log('โชคเข้าข้าง เซฟจุดโทษได้ ')}else log('ยืนนิ่งจนไม่ทันลูกจุดโทษ')}}]},
+{a:[16,30],q:'โค้ชถามว่าอยากเน้นฝึกทักษะแบบไหนเป็นพิเศษกับตัวต่อตัว',o:[
+ {t:'ฝึกยิงประตู',f:()=>{P.sk.sh=Math.min(99,P.sk.sh+4);log('ได้ฝึกการยิงแบบตัวต่อตัวกับโค้ช')}},
+ {t:'ฝึกส่งบอล',f:()=>{P.sk.ps=Math.min(99,P.sk.ps+4);log('ได้ฝึกการจ่ายบอลแบบตัวต่อตัวกับโค้ช')}},
+ {t:'ฝึกเลี้ยงบอล',f:()=>{P.sk.dr=Math.min(99,P.sk.dr+4);log('ได้ฝึกการเลี้ยงบอลแบบตัวต่อตัวกับโค้ช')}},
+ {c:()=>P.pos[0]!=='GK',t:'ฝึกเกมรับ',f:()=>{P.sk.df=Math.min(99,P.sk.df+4);log('ได้ฝึกการป้องกันและเข้าแย่งบอลกับโค้ช')}},
+ {c:()=>P.pos[0]==='GK',t:'ฝึกการรับลูก',f:()=>{P.sk.df=Math.min(99,P.sk.df+4);log('ได้ฝึกการรับลูกและการจับบอลกับโค้ช')}}]},
+{a:[19,33],q:'สัญญากำลังจะหมด ทีมเรียกคุณไปคุยเรื่องค่าเหนื่อยใหม่',o:[
+ {t:'ขอขึ้นเงินเดือนแรง ๆ',f:()=>{if(Math.random()<.3+Math.max(0,P.ca-TH[tierNow()])/40){P.bonus=Math.min(2,P.bonus*1.4);log('ทีมยอมขึ้นเงินเดือนให้ก้อนใหญ่ ')}else{cc(-1);log('ทีมไม่พอใจที่ขอสูงเกินไป บรรยากาศตึงเครียด',1)}}},
+ {t:'ขอปรับขึ้นพอประมาณ',f:()=>{P.bonus=Math.min(2,P.bonus*1.15);log('เซ็นสัญญาใหม่ด้วยเงินเดือนที่เพิ่มขึ้นเล็กน้อย')}},
+ {t:'เซ็นต่อโดยไม่ต่อรอง',f:()=>{cc(1);log('ทีมประทับใจในความภักดี')}}]},
+{a:[22,34],c:()=>P.earn>2e5,q:'เพื่อนเก่าชวนร่วมลงทุนธุรกิจด้วยเงินที่เก็บมา',o:[
+ {t:'ลงทุนเต็มที่',f:()=>{if(Math.random()<.45){P.earn*=1.35;log('ธุรกิจไปได้ดี ทรัพย์สินเพิ่มขึ้น ')}else{P.earn*=.6;log('ธุรกิจล้มเหลว เงินเก็บหายไปหลายส่วน',1)}}},
+ {t:'เก็บเงินไว้ใช้ยามเกษียณ',f:()=>log('เก็บเงินไว้อย่างมั่นคง')},
+ {t:'ซื้อรถหรูฉลอง',f:()=>{P.earn*=.93;cc(-1);log('ได้รถคันสวยแต่เสียสมาธิกับข่าวฟุ่มเฟือย')}}]},
+{a:[20,36],c:()=>P.ch[9]==='ฝืนเล่นต่อ',q:'เข่าที่ฝืนเล่นกลับมาเป็นหนักกว่าเดิม แพทย์เตือนว่าเสี่ยงเลิกเล่นถาวร',o:[
+ {t:'ผ่าตัดและพักยาว',f:()=>{cc(-3);P.earn*=.95;log('ผ่าตัดใหญ่และพักทั้งฤดูกาล แต่กลับมาแข็งแรง',1)}},
+ {t:'ฉีดยาแก้ปวดแล้วเล่นต่อ',f:()=>{if(Math.random()<.5){cc(-6);log('อาการทรุดหนัก ฟอร์มตกฮวบ',1)}else log('ผ่านฤดูกาลไปได้อย่างหวุดหวิด')}}]},
+{a:[18,34],c:()=>P.ch[7]==='รับงาน',q:'แบรนด์ที่คุณรับงานต้องการให้ไปถ่ายโฆษณาช่วงซ้อมทีม',o:[
+ {t:'ไปถ่ายโฆษณา',f:()=>{ene(-10);P.earn+=SB[tierNow()]*.15;cc(-1);log('ได้ค่าจ้างก้อนโต แต่พลาดซ้อมไปสองวัน')}},
+ {t:'ปฏิเสธและกลับไปซ้อม',f:()=>{cc(1);log('แบรนด์ผิดหวังแต่โค้ชชื่นชม')}}]},
+{a:[18,32],c:()=>P.ch[8]==='ไปเฉลิมฉลอง',q:'สโมสรเรียกประชุมวินัยเพราะข่าวปาร์ตี้ครั้งก่อน',o:[
+ {t:'ขอโทษและยอมรับโทษ',f:()=>{P.earn-=SB[tierNow()]*.05;cc(1);log('ยอมถูกปรับเงินและสัญญาว่าจะปรับปรุงตัว')}},
+ {t:'เถียงว่าไม่ผิด',f:()=>{if(Math.random()<.5)log('ทีมรับฟังและปล่อยผ่านไป');else{P.bonus*=.8;cc(-1);log('ทีมลดเงินเดือนเป็นการลงโทษ',1)}}}]},
+{a:[25,36],c:()=>P.ch[10]==='ย้ายไปรับเงินก้อนโต',q:'ชีวิตในลีกใหม่เงียบเหงา คุณเริ่มคิดถึงบ้านและฟุตบอลระดับเดิม',o:[
+ {t:'อยู่ต่อและรับเงินเต็มจำนวน',f:()=>{P.bonus=Math.min(2,P.bonus*1.2);cc(-1);log('เก็บเงินต่อไป แต่ฟอร์มเริ่มอ่อนลง')}},
+ {t:'จ่ายค่าปรับขอกลับลีกเดิม',f:()=>{P.earn-=SB[tierNow()]*.1;setClub(Math.max(2,P.tier-1),'จ่ายค่าปรับแล้วย้ายกลับไปอยู่')}}]},
+{a:[18,26],c:()=>P.ch[4]==='ไปทดสอบ',q:'เอเยนต์ชื่อดังติดต่อมา เสนอดูแลสัญญาให้คุณ',o:[
+ {t:'เซ็นกับเอเยนต์ใหญ่',f:()=>{P.bonus=Math.min(2,P.bonus*1.25);log('เอเยนต์ต่อรองเงินเดือนได้สูงขึ้น แต่หักค่าคอมมิชชันสูง')}},
+ {t:'จัดการเองต่อไป',f:()=>{cc(1);log('ตัดสินใจจัดการสัญญาเอง')}}]}
+,{a:[18,34],c:()=>P.earn>SBt(.8),q:'เงินเก็บเริ่มมากพอ ครอบครัวอยากให้คุณมีบ้านเป็นของตัวเอง',o:[
+ {t:'ซื้อบ้านหลังใหญ่ให้ครอบครัว',f:()=>{const s=spp(.2);ene(10);cc(1);log('ครอบครัวมีความสุขมาก ใจสงบขึ้นเวลาลงสนาม'+s)}},
+ {t:'ผ่อนบ้านหลังเล็กพอดีตัว',f:()=>{const s=spp(.08);log('ได้บ้านหลังเล็กอบอุ่น ภาระไม่หนักเกินไป'+s)}},
+ {t:'เช่าอยู่ต่อและเก็บเงินไว้',f:()=>log('ตัดสินใจเก็บเงินไว้ก่อน')}]},
+{a:[18,34],c:()=>P.earn>SBt(.8),q:'มีโค้ชเฉพาะทางเสนอตัวช่วยฝึกส่วนตัวนอกเวลาซ้อมทีม',o:[
+ {t:'จ้างโค้ชชื่อดังตัวต่อตัว',f:()=>{const k=['sh','ps','dr','df'][I(0,3)],s=sp(SBt(.15));P.sk[k]=Math.min(99,P.sk[k]+4);cc(1);log('ทักษะพัฒนาขึ้นชัดเจนจากการสอนตัวต่อตัว'+s)}},
+ {t:'จ้างโค้ชราคาประหยัด',f:()=>{const k=['sh','ps','dr','df'][I(0,3)],s=sp(SBt(.05));P.sk[k]=Math.min(99,P.sk[k]+2);log('ได้เทคนิคใหม่ ๆ ติดตัวไปบ้าง'+s)}},
+ {t:'ฝึกเองจากวิดีโอออนไลน์',f:()=>{ene(-5);log('ฝึกเองหลังซ้อม ไม่เสียเงินแต่เหนื่อยเพิ่ม')}}]},
+{a:[20,36],c:()=>P.earn>SBt(.8),q:'ร่างกายเริ่มสะสมความล้า แพทย์แนะนำให้ลงทุนกับการฟื้นฟูร่างกาย',o:[
+ {t:'จ้างนักกายภาพประจำตัว',f:()=>{const s=sp(SBt(.1));ene(25);cc(1);log('ร่างกายฟื้นตัวไวขึ้นมาก'+s)}},
+ {t:'ซื้ออุปกรณ์ฟื้นฟูไว้ใช้เอง',f:()=>{const s=sp(SBt(.04));ene(10);log('ได้อุปกรณ์นวดและแช่เย็นไว้ใช้ที่บ้าน'+s)}},
+ {t:'ใช้บริการของสโมสรตามปกติ',f:()=>log('ใช้ห้องฟื้นฟูของสโมสรตามสิทธิ์')}]},
+{a:[19,34],c:()=>P.earn>SBt(1.5),q:'เพื่อน ๆ ชวนไปพักผ่อนต่างประเทศช่วงปิดฤดูกาล',o:[
+ {t:'เลี้ยงทุกคนแบบหรูหรา',f:()=>{const s=spp(.12);ene(20);log('ทริปสุดหรูสนุกมาก แต่ข่าวฟุ่มเฟือยหลุดออกไป'+s,1)}},
+ {t:'ไปแบบประหยัด',f:()=>{const s=sp(SBt(.03));ene(12);log('ได้พักใจกับเพื่อน ๆ ในงบพอดี'+s)}},
+ {t:'ปฏิเสธและอยู่ซ้อมต่อ',f:()=>{ene(-3);cc(1);log('ใช้ช่วงปิดฤดูกาลซ้อมเพิ่ม')}}]},
+{a:[19,34],c:()=>P.earn>SBt(1.2),q:'ญาติสนิทขอยืมเงินก้อนใหญ่ไปทำธุรกิจ',o:[
+ {t:'ให้ยืมตามที่ขอ',f:()=>{if(Math.random()<.5)log('ธุรกิจไปได้ด้วยดี ญาติคืนเงินครบ');else{const s=spp(.1);log('ธุรกิจล้มเหลว เงินที่ให้ยืมหายไป'+s,1)}}},
+ {t:'ให้ยืมแค่ครึ่งเดียว',f:()=>{const s=sp(SBt(.05));log('ช่วยตามกำลังโดยไม่กระทบเงินเก็บมากนัก'+s)}},
+ {t:'ปฏิเสธอย่างสุภาพ',f:()=>log('อธิบายว่าต้องเก็บเงินไว้ดูแลอนาคตของตัวเอง')}]},
+{a:[22,36],c:()=>P.earn>SBt(1.5),q:'โรงเรียนเก่าขอรับบริจาคเพื่อสร้างสนามฟุตบอลใหม่ให้เด็ก ๆ',o:[
+ {t:'บริจาคก้อนใหญ่',f:()=>{const s=sp(SBt(.2));P.bonus=Math.min(2,P.bonus*1.03);cc(1);log('ได้รับคำชื่นชมจากสื่อและแฟนบอล'+s)}},
+ {t:'บริจาคตามกำลัง',f:()=>{const s=sp(SBt(.04));log('เด็ก ๆ ส่งการ์ดขอบคุณมาให้'+s)}},
+ {t:'ขอผ่านครั้งนี้',f:()=>log('ปฏิเสธอย่างสุภาพเพราะมีแผนการเงินของตัวเอง')}]},
+{a:[27,36],c:()=>P.earn>SBt(2),q:'คุณคิดจะเปิดอคาเดมีฝึกเด็กเป็นของตัวเองหลังเลิกเล่น',o:[
+ {t:'ลงทุนเปิดอคาเดมีเต็มตัว',f:()=>{const s=sp(SBt(.3));if(Math.random()<.6){P.earn+=SBt(.5);log('อคาเดมีมีเด็กสมัครล้น เริ่มมีกำไรแล้ว'+s)}else log('ค่าใช้จ่ายสูงกว่าที่คิด ขาดทุนในปีแรก'+s,1)}},
+ {t:'เปิดเป็นคอร์สสุดสัปดาห์เล็ก ๆ',f:()=>{const s=sp(SBt(.06));P.earn+=SBt(.1);log('ได้สอนเด็ก ๆ ที่รักบอลและมีรายได้เล็กน้อย'+s)}},
+ {t:'ยังไม่พร้อม รอก่อน',f:()=>log('เก็บแผนนี้ไว้คิดต่อ')}]}
+];
+const EXTRA={
+2:{c:()=>P.sk.dr>=50,t:'โชว์ทักษะเลี้ยงบอลสะกดสายตา',f:()=>{cc(2);log('ลีลาการเลี้ยงบอลทำให้รุ่นพี่และโค้ชชุดใหญ่ต้องหันมามอง')}},
+3:{c:()=>P.sk.ps>=50,t:'เป็นศูนย์กลางเกมด้วยการจ่ายบอล',f:()=>{P.caps+=I(1,3);cc(1);log('จ่ายบอลได้เฉียบขาดจนได้ติดทีมชาติเยาวชน ')}},
+4:{c:()=>P.sk.sh>=55||P.sk.dr>=55,t:'โชว์ฝีเท้าเด่นจนแมวมองประทับใจ',f:()=>setClub(P.tier-1,'แมวมองเสนอสัญญาให้ทันที ย้ายไปอยู่')},
+5:{c:()=>P.sk.ps>=55,t:'ใช้การจ่ายบอลสร้างเคมีลงเล่นคู่กัน',f:()=>{cc(1);log('เล่นเข้าขากับคู่แข่งจนโค้ชใช้ทั้งสองคนพร้อมกัน')}},
+6:{c:()=>P.sk.dr>=60||P.sk.sh>=60,t:'เสนอให้ใช้จุดแข็งของคุณในระบบใหม่',f:()=>{cc(2);log('โค้ชปรับแผนให้เข้ากับจุดเด่นของคุณ')}}
+};
+function event(){
+ const a=P.age,ok=EV.map((e,i)=>i).filter(i=>a>=EV[i].a[0]&&a<=EV[i].a[1]&&!P.seen.includes(i)&&(!EV[i].c||EV[i].c()));
+ if(!ok.length)return;const i=ok[I(0,ok.length-1)];P.seen.push(i);const e=EV[i];
+ pend={q:' '+e.q,ei:i,o:[...e.o,EXTRA[i]].filter(x=>x&&(!x.c||x.c()))}}
+function bar(v){return`<div class="bar"><i style="width:${Math.min(100,v)}%"></i></div>`}
+const FI=['💪','📐','🧠','😴','🔥','🥅','🎯','👟','🛡️','⚖️'],FD=['ฟิตเนสและความแข็งแกร่ง · โตปกติ','ฝึกพื้นฐานเทคนิค · โตปกติ','ใจนิ่ง วินัยดี · โตปกติ','ฟื้นพลังงานเต็มที่ · ทักษะไม่เพิ่ม','โตเร็วสุด · เสี่ยงบาดเจ็บสูง','โตเพิ่ม +3–6 ต่อปี','โตเพิ่ม +3–6 ต่อปี','โตเพิ่ม +3–6 ต่อปี','โตเพิ่ม +3–6 ต่อปี','ทุกทักษะโตเพิ่ม +2'],FG=[['พื้นฐาน',[0,1,2,3]],['ฝึกทักษะเฉพาะทาง',[5,6,7,8]],['พิเศษ',[4,9]]];
+const dual=(e,b)=>`<div class="bar dual"><i class="gh" style="width:${Math.min(100,b)}%"></i><i style="width:${Math.min(100,e)}%"></i></div>`,sv=(e,b)=>e<b?`<b class="bd">${e}</b> (ปกติ ${b})`:b;
+function draw(){
+ const A=document.getElementById('app');
+ if(!P){A.innerHTML=tr('<button class="p" onclick="start()">สุ่มเกิดเป็นเด็กอคาเดมี</button>');return}
+ if(P.rolling)return;
+ const E=P.en,pc=enPct(),lv=E>=70?['hi','สดชื่น']:E>=40?['mid','เริ่มล้า']:E>=20?['lo','เหนื่อยล้า']:['lo','หมดแรง'];
+ let h=`<canvas id="cv" width="160" height="48"></canvas><div class="card"><b>${P.name}</b> <span class="mu">· ${P.club[0]} · ${P.club[1]} · ระดับ ${P.tier} · ${P.pos[1]} · อายุ ${P.age}</span>
+ <div class="mu">ความสามารถปัจจุบัน ${sv(cae(),P.ca)}</div>${dual(cae(),P.ca)}
+ ${P.over?'':`<div class="en ${lv[0]}"><div class="hd"><b>⚡ พลังงาน ${E}/100 · ${lv[1]}</b><span class="${pc?'bd':'mu'}">${pc?`ค่าสถานะลดชั่วคราว −${pc}%`:'ค่าสถานะเต็ม 100%'}</span></div><div class="bar"><i style="width:${E}%"></i><em class="tk"></em></div><div class="mu sm">พลังงานต่ำกว่า 70 ค่าสถานะจะลดลงตามพลังงาน (สูงสุด −40%)</div></div>`}
+ <div class="g mu"><span>ลงเล่น ${P.apps} นัด</span><span>ประตู ${P.goals} · แอสซิสต์ ${P.ast}</span><span>ไม่เสียประตู ${P.cs} นัด</span><span>ทีมชาติ ${P.caps} นัด</span><span>ยอดสูงสุด ${P.peak}</span><span>เงินเดือน $${fm(P.sal)}/ปี</span><span>รายได้รวม $${fm(P.earn)}</span></div><div class="g mu" style="margin-top:8px">${SKN().map((n,i)=>`<span>${n} ${sv(se(SK[i]),P.sk[SK[i]])}${dual(se(SK[i]),P.sk[SK[i]])}</span>`).join('')}</div></div>`;
+ const h0=h.length;
+ if(P.over)h+=`${summary()}<div class="card"><b>${P.name} · จบอาชีพ: ${verdict()}</b><p class="mu">สโมสรที่เคยอยู่: ${P.clubs.join(' → ')}<br>ศักยภาพที่ซ่อนอยู่ของคุณคือ ${P.pa} (จากเต็ม 100)${P.edu?'<br>คุณเรียนควบคู่ไปด้วย จึงมีทางเลือกหลังเลิกเล่น':''}</p><button class="p" onclick="start()">เกิดใหม่แบบสุ่ม</button></div>`;
+ else if(pend){const L=['A','B','C','D','E'],os=pend.o?pend.o.map((x,i)=>[x.t,'opt('+i+')']):[['ตกลง','ans(1)'],['ปฏิเสธ','ans(0)']];
+ h+=`<div class="card"><div class="sec">${tr('📣 เหตุการณ์')}</div><p class="q">${pend.q}</p><div class="evo">${os.map((x,i)=>`<button class="eo" onclick="${x[1]}"><span class="lt">${L[i]}</span><span>${x[0]}</span></button>`).join('')}</div></div>`}
+ else{const F=['ร่างกาย','เทคนิค','จิตใจและวินัย','พักผ่อน','ซ้อมหนักพิเศษ',...SKN().map(n=>'ฝึก'+n),'สมดุล'],pe=Math.max(0,Math.min(100,E+FE[P.focus])),pp=enPct(pe),
+ tile=i=>{const d=FE[i],on=P.focus===i;return`<button class="opt${on?' on':''}" onclick="P.focus=${i};draw()"><span class="eb ${d>0?'up':'dn'}">⚡ ${d>0?'+':'−'}${Math.abs(d)}</span><span class="ic">${i===8&&P.pos[0]==='GK'?'🧤':FI[i]}</span><b>${on?'✓ ':''}${F[i]}</b><small>${FD[i]}</small></button>`};
+ h+=`<div class="card"><div class="mu">ปีนี้คุณจะเน้นอะไร · เหลือ <b><span id="tt">${Math.ceil(left)}</span> วินาที</b></div><div class="bar"><i id="tb" style="width:${Math.max(0,left/YT*100)}%"></i></div><div class="fd" id="fd">${feedHtml()}</div>${FG.map(g=>`<div class="sec">${g[0]}</div><div class="opts${g[1].length>3?' c4':''}">${g[1].map(tile).join('')}</div>`).join('')}<div class="pv">เลือก <b>${F[P.focus]}</b> → ปีนี้เล่นด้วยพลังงาน ~${pe} · ${pp?`ค่าสถานะลด −${pp}% (ชั่วคราว)`:'ค่าสถานะเต็ม'}</div><div class="ctl"><button class="go p" onclick="step(P.focus)">ข้ามไปปีถัดไป ▶</button><button onclick="paused=!paused;draw()">${paused?'▶ เล่นต่อ':'⏸ หยุดเวลา'}</button><button class="${spd>1?'p':''}" onclick="spd=spd===1?2:1;draw()">⏩ เร็ว ×${spd}</button></div></div>`}
+ A.innerHTML=`<div class="gm"><div class="col">${tr(h.slice(0,h0))}</div><div class="col">${pend?h.slice(h0):tr(h.slice(h0))}</div><div class="col">${tr(lgHtml())}<div class="card" id="log">${P.log.join('')}</div></div></div>`}
+function drawScene(x,ft,name){
+ const R=(a,b,w,h,col)=>{x.fillStyle=col;x.fillRect(a|0,b|0,w,h)};
+ R(0,0,160,48,'#101838');R(0,6,160,6,'#1a2650');R(0,12,160,10,'#26366e');
+ for(let i=0;i<160;i+=2){R(i,6+(i>>1&1),1,1,'#101838');R(i,12+(i>>1&1),1,1,'#1a2650')}
+ R(0,13,160,9,'#2b2f45');
+ const CC=['#d8453b','#f0c43c','#e9e9f2','#3f7fd8','#2b2f45'];
+ for(let r=0;r<3;r++)for(let i=0;i<160;i+=2)R(i,14+r*3,2,2,CC[((i*7+r*13+((i+r)%5?0:ft>>3))%11)%5]);
+ [6,152].forEach(l=>{R(l,2,3,3,'#fff6c8');R(l-1,3,5,1,'#fff6c8');R(l+1,1,1,5,'#fff6c8')});
+ const t=ft*2,o=t%32;
+ for(let i=-2;i<12;i++)R(i*16-o,22,16,26,i&1?'#2e8b4a':'#26793f');
+ R(0,22,160,1,'#1d5f31');R(0,25,160,1,'#cfe8d4');R((((70-t)%64)+64)%64+16,25,1,23,'#cfe8d4');R(0,46,160,2,'#1d5f31');
+ let h=0;for(const ch of name)h=(h+ch.charCodeAt(0))%360;
+ const J=`hsl(${h},65%,48%)`,JL=`hsl(${h},65%,62%)`,JD=`hsl(${h},65%,30%)`,O='#14101c',K='#f2c79b',KD='#c98f63',px=48,y=43,fr=(ft>>1)%4;
+ R(px-7,y+1,15,1,'#1b5530');R(px-5,y+2,11,1,'#1b5530');
+ const la=fr===0?2:0,lb=fr===2?2:0,ax=[-3,0,3,0][fr];
+ const leg=(lx,l)=>{R(lx-1,y-9,4,6-l,O);R(lx,y-9,2,5-l,K);R(lx+1,y-9,1,5-l,KD);R(lx-1,y-4-l,5,4,O);R(lx-1,y-4-l,4,3,'#ececf4')};
+ leg(px+1-ax,lb);leg(px-3+ax,la);
+ R(px-5,y-14,10,6,O);R(px-4,y-14,8,5,'#f2f2f8');R(px+1,y-14,3,5,'#c9ccd8');
+ R(px-5,y-22,11,9,O);R(px-4,y-22,9,8,J);R(px-4,y-22,3,8,JL);R(px+2,y-22,3,8,JD);R(px-4,y-18,9,1,'#f4f4f8');
+ R(px+5,y-21+(fr===0?1:0),3,6,O);R(px+5,y-21+(fr===0?1:0),2,5,K);
+ R(px-8,y-21+(fr===2?1:0),3,6,O);R(px-8,y-21+(fr===2?1:0),2,5,KD);
+ R(px-4,y-30,9,9,O);R(px-3,y-29,7,7,K);R(px-3,y-29,7,2,'#4a2c17');R(px-3,y-27,1,3,'#4a2c17');R(px+2,y-26,1,2,O);R(px+3,y-24,1,1,KD);
+ const bx=px+22,by=y-(Math.abs(Math.sin(ft*.35))*7|0),d=[[0,-3],[1,-2],[0,-1],[-1,-2]][ft>>2&3];
+ R(bx-2,y+1,5,1,'#1b5530');R(bx-2,by-4,5,5,O);R(bx-1,by-3,3,3,'#fff');R(bx+d[0],by+d[1]-1,1,1,'#222');
+}
+let ft=0;
+setInterval(()=>{const c=document.getElementById('cv');if(!c||!P)return;const sc=Math.max(1,Math.floor(c.parentNode.clientWidth/160));c.style.width=160*sc+'px';ft++;drawScene(c.getContext('2d'),ft,P.club[0])},80);
+initLang();draw();
+</script>
+</body>
+</html>
